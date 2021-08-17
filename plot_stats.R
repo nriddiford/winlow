@@ -41,6 +41,11 @@ ec_stats <- ec_stats %>%
                                        ifelse(abs(log2_FC) >= 0.32, 'medium', 'low'))) %>%
   dplyr::mutate(group = substring(sample, 1, 1))
 
+
+red <- "#FC4E07"
+blue <- "#00AFBB"
+yellow <- "#E7B800"
+
 colours <- c(
   "low" = "#00AFBB",
   "medium" = "#E7B800",
@@ -49,6 +54,7 @@ colours <- c(
 
 ec_stats %>% 
   ggplot(.) +
+  dplyr::arrange(-contamination) %>% 
   geom_bar(aes(sample, log2_FC, colour = contamination, fill = contamination), alpha = 0.5, stat = "identity") +
   scale_colour_manual(values = colours) +
   scale_fill_manual(values = colours) +
