@@ -181,7 +181,7 @@ def get_args():
 
     parser.add_option("-t", "--tumour", dest="tumour", action="store", help="Bam file for tumour sample")
     parser.add_option("-n", "--normal", dest="normal", action="store", help="Bam file for normal sample")
-    parser.add_option("-s", "--sample", dest="sample", action="store", help="Bam file for normal sample")
+    parser.add_option("-s", "--sample", dest="sample", action="store", help="Number of times to sample [Default: 10]")
     parser.add_option("-r", "--region", dest="region", action="store", help="Region to compare. E.g. X:100000-200000")
     parser.add_option("-w", "--window", dest="window", action="store", help="Window in bps to sample. [Default: 10000] ")
     parser.add_option("-o", "--out_file", dest="out_file", action="store", help="File to write annotated vars to")
