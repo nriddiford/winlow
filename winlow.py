@@ -34,34 +34,41 @@ def get_depth(options):
 
     chrom, start, end = extract_loci(options.region)
 
-    with open('window_size.bed', 'w') as region_out: region_out.write('\t'.join([chrom, str(0), str(options.window)]))
+    with open('window_size.bed', 'w') as region_out:
+        region_out.write('\t'.join([chrom, str(0), str(options.window)]))
+
     a = pybedtools.BedTool('window_size.bed')
 
-    with open('incl.bed', 'w') as out: out.write('\t'.join([chrom, str(start), str(end)]))
+    with open('incl.bed', 'w') as out:
+        out.write('\t'.join([chrom, str(start), str(end)]))
 
     norms = []
     tums = []
 
     if options.debug:
         t_out = tumour_name + '.bed'
-        if os.path.exists(t_out): os.remove(t_out)
+        if os.path.exists(t_out):
+            os.remove(t_out)
 
     for i in range(1, int(options.sample)):
         c, s, e = str(a.shuffle(genome={'3R':(0,32079331)}, incl='incl.bed')).split()
         s = int(s)
         e = int(e)
-        if i % 10 == 0: print("Sampled %s regions" % (i))
+
+        if i % 10 == 0:
+            print("Sampled %s regions" % (i))
+
         tum_count = region_depth(options.tumour, c, s, e, options)
         norm_count = region_depth(options.normal, c, s, e, options)
         tums.append(tum_count)
         norms.append(norm_count)
+
         if options.debug:
             t_out = tumour_name + '.bed'
             info = "T:" + str(tum_count) + "/N:" + str(norm_count)
             with open(t_out, mode='a') as counts_file:
                 counts_writer = csv.writer(counts_file, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 counts_writer.writerow([c, s, e, info])
-
 
     norm_adj = []
     for n in norms:
@@ -85,9 +92,7 @@ def get_depth(options):
     # info.append(tumour_name, round(np.average(tums)))
 
     with open('stats.csv', mode='a') as stats_file:
-
         info_writer = csv.writer(stats_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
         # info_writer.writerow(["sample", 'tissue', 'total mapped reads', 'region', 'n samples', 'average read count in window', 'fc', 'log2FC' ])
         info_writer.writerow([tumour_name, 'tumour', tumour_mapped, options.region, options.sample, round(np.average(tums), 2), fc, log2FC, p, sig_val])
         info_writer.writerow([normal_name, 'normal', normal_mapped, options.region, options.sample, round(np.average(norm_adj), 2), fc, log2FC, p, sig_val])
